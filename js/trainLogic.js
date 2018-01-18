@@ -30,38 +30,36 @@
   $("#add-train").on("click", function(event) {
     event.preventDefault();
 
-  // Grabs user input from text boxes
-  var trainName = $("#train-name-input").val().trim();
-  var destination = $("#destination-input").val().trim();
-  var firstTraintime = moment($("#train-time-input").val().trim(), "HH:mm").format("X");
-  var frequency = $("#frequency-input").val().trim();
+    // Grabs user input from text boxes
+    var trainName = $("#train-name-input").val().trim();
+    var destination = $("#destination-input").val().trim();
+    var firstTraintime = ($("#train-time-input").val().trim(), "HH:mm").format("X");
+    var frequency = $("#frequency-input").val().trim();
 
-// Code for handling the push
-      database.ref().push({
-        trainName: trainName,
-        destination: destination,
-        firstTraintime: firstTraintime,
-        frequency: frequency,
-        dateAdded: firebase.database.ServerValue.TIMESTAMP
-      });
+  // Code for handling the push
+        database.ref().push({
+          trainName: trainName,
+          destination: destination,
+          firstTraintime: firstTraintime,
+          frequency: frequency,
+          dateAdded: firebase.database.ServerValue.TIMESTAMP
+        });
 
-    });
+  });
     // Firebase watcher + initial loader + order/limit
-    database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+    database.ref().orderByChild("dateAdded").on("child_added", function(snapshot) {
       // storing the snapshot.val() in a variable for convenience
       var sv = snapshot.val();
-
+      var nextTrain = moment().add(tMinutesTillTrain, "minutes");
       // Console.loging the last user's data - snapshot value
       console.log(sv.trainName);
       console.log(sv.destination);
       console.log(sv.frequency);
       //console.log(sv.comment);
+      var trainTable = $("#train-table > tbody").append("<tr><td>" + sv.trainName + "</td><td>" + 
+      sv.destination + "</td><td>" + sv.frequency + "</td><td>" + moment(nextTrain).format("hh:mm") + "</td><td>" + 
+      10 + "</td></tr>");
 
-      // Change the HTML to reflect
-      // $("#train-name-input").text(sv.trainName);
-      // $("#destination-input").text(sv.destination);
-      // $("#frequency-input").text(sv.frequency);
-      // $("#comment-display").text(sv.comment);
 
       // Handle the errors
     }, function(errorObject) {
@@ -112,6 +110,6 @@
     console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
 
 // Add each train's data into the table
-  $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + 
-    destination + "</td><td>" + frequency + "</td><td>" + moment(nextTrain).format("hh:mm") + "</td><td>" + tMinutesTillTrain + "</td></tr>");
+  //$("#train-table > tbody").append("<tr><td>" + trainTable + "</td><td>" + 
+   // destination + "</td><td>" + frequency + "</td><td>" + moment(nextTrain).format("hh:mm") + "</td><td>" + tMinutesTillTrain + "</td></tr>");
   
